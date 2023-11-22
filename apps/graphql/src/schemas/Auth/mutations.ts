@@ -70,8 +70,6 @@ builder.mutationField('signin', t =>
         if (!session.user.userId) {
           throw new Error('Authentication failed')
         }
-        console.log('session')
-        console.log(session)
         return {
           user: {
             userId: session.user.userId,

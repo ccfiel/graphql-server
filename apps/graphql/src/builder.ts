@@ -10,25 +10,12 @@ import type PrismaTypes from '../prisma/generated'
 
 import { db } from './db'
 import { stringToFloatJson, intToString, toObject } from './utils/stringToFloatJson'
-
-export class User {
-  userId: string
-
-  email: string
-
-  token: string
-
-  constructor(userId: string, email: string, token: string) {
-    this.userId = userId
-    this.email = email
-    this.token = token
-  }
-}
+import { Session } from 'lucia'
 
 export const builder = new SchemaBuilder<{
   PrismaTypes: PrismaTypes
   Context: {
-    currentUser: User
+    currentSession: Session | null
   }
   SmartSubscriptions: string
   Scalars: {
@@ -59,7 +46,7 @@ export const builder = new SchemaBuilder<{
   },
   relayOptions: {},
   authScopes: async (context): Promise<{ isAuthenticated: boolean }> => ({
-    isAuthenticated: context.currentUser !== null,
+    isAuthenticated: context.currentSession !== null,
   }),
 })
 

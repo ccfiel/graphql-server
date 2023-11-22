@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import 'dotenv/config'
 import { resolve } from 'path'
 import { fileURLToPath } from 'url'
@@ -9,66 +10,30 @@ import { createYoga, useReadinessCheck } from 'graphql-yoga'
 
 import { checkDbAvailable } from './db'
 import { schema } from './schema'
+import { auth } from './db'
+import { Session } from 'lucia'
 
-export class User {
-  userId: string
-
-  email: string
-
-  token: string
-
-  constructor(userId: string, email: string, token: string) {
-    this.userId = userId
-    this.email = email
-    this.token = token
-  }
-}
 const nodePath = resolve(process.argv[1])
 const modulePath = resolve(fileURLToPath(import.meta.url))
 const isCLI = nodePath === modulePath
 
-function getUserFromAuthHeader(authHeader: string): User | null {
-  const currentUser = new User('admin', 'admin@email.com', '123456')
-
-  // if (authHeader) {
-  //   const [type, token] = authHeader.split(' ')
-  //   let currentUser: User | null = null
-
-  //   if (type !== 'Bearer') {
-  //     return null
-  //   } else {
-  //     if (!token) {
-  //       return null
-  //     } else if (token === '123456') {
-  //       currentUser = new User('admin', 'admin@email.com', '123456')
-  //     }
-  //   }
-  //   return currentUser
-  // } else {
-  //   return null
-  // }
-  return currentUser
+async function getSession(req: any): Promise<Session | null> {
+  const authRequest = auth.handleRequest(req)
+  const session = await authRequest.validate()
+  if (!session) {
+    return session
+  } else {
+    return null
+  }
 }
-
 export default function main(port: number = Config.port) {
-  // const client = new PrismaClient()
-
-  // const auth = lucia({
-  //   adapter: prisma(client, {
-  //     user: 'user', // model User {}
-  //     key: 'key', // model Key {}
-  //     session: 'session', // model Session {}
-  //   }),
-  //   env: 'DEV',
-  // })
-
   const yoga = createYoga({
     graphqlEndpoint: '/',
     healthCheckEndpoint: '/live',
     landingPage: false,
     schema,
     context: async ({ req }: ServerResponse) => ({
-      currentUser: getUserFromAuthHeader(req.headers.authorization?.toString() ?? ''),
+      currentSession: await getSession(req),
     }),
     plugins: [
       useReadinessCheck({
