@@ -8,9 +8,21 @@ import { ServerResponse, createServer } from 'node:http'
 import { createYoga, useReadinessCheck } from 'graphql-yoga'
 
 import { checkDbAvailable } from './db'
-import { User } from './schemas/Auth'
 import { schema } from './schema'
 
+export class User {
+  userId: string
+
+  email: string
+
+  token: string
+
+  constructor(userId: string, email: string, token: string) {
+    this.userId = userId
+    this.email = email
+    this.token = token
+  }
+}
 const nodePath = resolve(process.argv[1])
 const modulePath = resolve(fileURLToPath(import.meta.url))
 const isCLI = nodePath === modulePath

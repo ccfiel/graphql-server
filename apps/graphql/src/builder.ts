@@ -9,8 +9,21 @@ import RelayPlugin from '@pothos/plugin-relay'
 import type PrismaTypes from '../prisma/generated'
 
 import { db } from './db'
-import { User } from './schemas/Auth'
 import { stringToFloatJson, intToString, toObject } from './utils/stringToFloatJson'
+
+export class User {
+  userId: string
+
+  email: string
+
+  token: string
+
+  constructor(userId: string, email: string, token: string) {
+    this.userId = userId
+    this.email = email
+    this.token = token
+  }
+}
 
 export const builder = new SchemaBuilder<{
   PrismaTypes: PrismaTypes

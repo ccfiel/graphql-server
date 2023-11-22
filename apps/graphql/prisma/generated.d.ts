@@ -1,5 +1,5 @@
 /* eslint-disable */
-import type { Prisma, User, Session, Key } from "/Users/chrisianfiel/my-app/node_modules/@prisma/client";
+import type { Prisma, User, Session, Key } from "/Users/chrisianfiel/graphql-server/node_modules/.pnpm/@prisma+client@5.6.0_prisma@5.6.0/node_modules/@prisma/client";
 export default interface PrismaTypes {
     User: {
         Name: "User";

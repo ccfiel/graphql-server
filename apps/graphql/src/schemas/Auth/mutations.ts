@@ -1,23 +1,35 @@
 import { auth } from '../../db'
 import { builder } from '../../builder'
 
-export class User {
-  userId: string
-
-  email: string
-
-  token: string
-
-  constructor(userId: string, email: string, token: string) {
-    this.userId = userId
-    this.email = email
-    this.token = token
-  }
-}
-
-const AuthPayload = builder.simpleObject('AuthPayload', {
+const UserType = builder.simpleObject('User', {
   fields: t => ({
-    token: t.string({
+    userId: t.string({
+      nullable: false,
+    }),
+  }),
+})
+
+const SessionType = builder.simpleObject('Session', {
+  fields: t => ({
+    user: t.field({
+      type: UserType,
+      nullable: false,
+    }),
+    sessionId: t.string({
+      nullable: false,
+    }),
+    idlePeriodExpiresAt: t.field({
+      type: 'DateTime',
+      nullable: false,
+    }),
+    activePeriodExpiresAt: t.field({
+      type: 'DateTime',
+      nullable: false,
+    }),
+    state: t.string({
+      nullable: false,
+    }),
+    fresh: t.boolean({
       nullable: false,
     }),
   }),
@@ -27,28 +39,26 @@ async function signIn(email: string, password: string) {
   const key = await auth.useKey('username', email, password)
   const session = await auth.createSession({
     userId: key.userId,
-    attributes: {}
-  });
+    attributes: {},
+  })
   return session
 }
 
 async function signUp(email: string, password: string) {
   const user = await auth.createUser({
     key: {
-      providerId: "username", 
-      providerUserId: email, 
-      password 
+      providerId: 'username',
+      providerUserId: email,
+      password,
     },
-    attributes: {
-    }
-  });
+    attributes: {},
+  })
   return user
 }
 
-
 builder.mutationField('signin', t =>
   t.field({
-    type: AuthPayload,
+    type: SessionType,
     args: {
       email: t.arg.string({}),
       password: t.arg.string({}),
@@ -60,12 +70,17 @@ builder.mutationField('signin', t =>
         if (!session.user.userId) {
           throw new Error('Authentication failed')
         }
-        const token = session.sessionId
-        if (!token) {
-          throw new Error('Token not found')
-        }
+        console.log('session')
+        console.log(session)
         return {
-          token,
+          user: {
+            userId: session.user.userId,
+          },
+          sessionId: session.sessionId,
+          idlePeriodExpiresAt: session.idlePeriodExpiresAt,
+          activePeriodExpiresAt: session.activePeriodExpiresAt,
+          state: session.state,
+          fresh: session.fresh,
         }
       } catch (error) {
         throw new Error('Authentication failed')
@@ -76,7 +91,7 @@ builder.mutationField('signin', t =>
 
 builder.mutationField('signup', t =>
   t.field({
-    type: AuthPayload,
+    type: SessionType,
     args: {
       email: t.arg.string({}),
       password: t.arg.string({}),
@@ -90,14 +105,20 @@ builder.mutationField('signup', t =>
         }
         const session = await auth.createSession({
           userId: user.userId,
-          attributes: {}
-        });
+          attributes: {},
+        })
         if (!session) {
           throw new Error('Cannot create session')
         }
-        const token = JSON.stringify(session)
         return {
-          token,
+          user: {
+            userId: session.user.userId,
+          },
+          sessionId: session.sessionId,
+          idlePeriodExpiresAt: session.idlePeriodExpiresAt,
+          activePeriodExpiresAt: session.activePeriodExpiresAt,
+          state: session.state,
+          fresh: session.fresh,
         }
       } catch (error) {
         console.error(error)
@@ -106,5 +127,3 @@ builder.mutationField('signup', t =>
     },
   }),
 )
-
-
