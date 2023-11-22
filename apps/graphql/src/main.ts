@@ -15,8 +15,8 @@ const app = express()
 
 async function getSession(req: any): Promise<Session | null> {
   const authRequest = auth.handleRequest(req)
-  const session = await authRequest.validate()
-  if (!session) {
+  const session = await authRequest.validateBearerToken()
+  if (session) {
     return session
   } else {
     return null

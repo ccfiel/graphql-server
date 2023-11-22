@@ -41,6 +41,7 @@ async function signIn(email: string, password: string) {
     userId: key.userId,
     attributes: {},
   })
+  
   return session
 }
 

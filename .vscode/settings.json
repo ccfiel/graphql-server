@@ -3,5 +3,13 @@
     {
       "mode": "auto"
     }
+  ],
+  "sqltools.connections": [
+    {
+      "previewLimit": 50,
+      "driver": "SQLite",
+      "name": "sss",
+      "database": "${workspaceFolder:graphql-server}/apps/graphql/prisma/dev.db"
+    }
   ]
 }
