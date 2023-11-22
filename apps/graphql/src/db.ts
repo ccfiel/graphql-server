@@ -1,15 +1,17 @@
 import { PrismaClient } from '@prisma/client'
 import { lucia } from 'lucia'
 import { prisma } from '@lucia-auth/adapter-prisma'
+import { web } from "lucia/middleware";
 
 export const db = new PrismaClient()
 
 export const auth = lucia({
   adapter: prisma(db, {
-    user: 'user', // model User {}
-    key: 'key', // model Key {}
-    session: 'session', // model Session {}
+    user: 'user', 
+    key: 'key', 
+    session: 'session', 
   }),
+  middleware: web(),
   env: 'DEV',
 })
 
@@ -21,3 +23,5 @@ export async function checkDbAvailable(): Promise<boolean> {
     return false
   }
 }
+
+export type Auth = typeof auth;

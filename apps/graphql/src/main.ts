@@ -1,10 +1,8 @@
 #!/usr/bin/env node
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import 'dotenv/config'
-import { resolve } from 'path'
-import { fileURLToPath } from 'url'
 import { Config } from './config.js'
-import { ServerResponse, createServer } from 'node:http'
+import express from 'express'
 
 import { createYoga, useReadinessCheck } from 'graphql-yoga'
 
@@ -13,9 +11,7 @@ import { schema } from './schema'
 import { auth } from './db'
 import { Session } from 'lucia'
 
-const nodePath = resolve(process.argv[1])
-const modulePath = resolve(fileURLToPath(import.meta.url))
-const isCLI = nodePath === modulePath
+const app = express()
 
 async function getSession(req: any): Promise<Session | null> {
   const authRequest = auth.handleRequest(req)
@@ -32,8 +28,8 @@ export default function main(port: number = Config.port) {
     healthCheckEndpoint: '/live',
     landingPage: false,
     schema,
-    context: async ({ req }: ServerResponse) => ({
-      currentSession: await getSession(req),
+    context: async req => ({
+      currentSession: await getSession(req.request),
     }),
     plugins: [
       useReadinessCheck({
@@ -45,16 +41,8 @@ export default function main(port: number = Config.port) {
       }),
     ],
   })
-  const server = createServer(yoga)
-  if (isCLI) {
-    server.listen(port, () => {
-      console.info(`Server is running on http://localhost:${port}`)
-    })
-  }
-
-  return server
+  app.use('/', yoga)
+  app.listen(port, () => console.log(`Example app listening on port ${port}!`))
 }
 
-if (isCLI) {
-  main()
-}
+main()
