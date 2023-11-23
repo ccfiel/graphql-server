@@ -13,7 +13,7 @@
 		const password = target.password.value;
 		console.log('onSignUp', username, password);
 		const res = await signin.mutate({ username, password });
-		console.log('res', res);
+		console.log('res', res.data?.signin.sessionId);
 	}
 </script>
 
