@@ -2,6 +2,7 @@
 	import { SignInStore } from "$houdini";
 
 	const signin = new SignInStore()
+	let errorMessage: string = '';
 
 	async function onSignIn(event: Event) {
 		event.preventDefault();
@@ -13,7 +14,11 @@
 		const password = target.password.value;
 		console.log('onSignUp', username, password);
 		const res = await signin.mutate({ username, password });
-		console.log('res', res.data?.signin.sessionId);
+		if (res.errors?.length ?? 0 > 0) {
+			if (res.errors && res.errors.length > 0) {
+				errorMessage = res.errors[0].message;
+			}
+		}
 	}
 </script>
 
@@ -25,7 +30,7 @@
 	<input type="password" name="password" id="password" /><br />
 	<input type="submit" />
 </form>
-<!-- {#if form?.message}
-	<p class="error">{form.message}</p>
-{/if} -->
+{#if errorMessage}
+	<p class="error">{errorMessage}</p>
+{/if}
 <a href="/signup">Create an account</a>
