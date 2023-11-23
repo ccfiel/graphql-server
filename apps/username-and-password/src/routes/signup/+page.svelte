@@ -12,16 +12,15 @@
 		};
 		const username = target.username.value;
 		const password = target.password.value;
-		console.log('onSignUp', username, password);
+
 		const res = await signup.mutate({ username, password });
 		if (res.errors?.length ?? 0 > 0) {
-			if (
-				res.errors &&
-				res.errors.length > 0 &&
-				res.errors[0].message === 'AUTH_DUPLICATE_KEY_ID'
-			) {
-				errorMessage = 'Username already exists';
+			if (res.errors && res.errors.length > 0) {
+				errorMessage = res.errors[0].message;
 			}
+		}
+		if (errorMessage == 'AUTH_DUPLICATE_KEY_ID') {
+			errorMessage = 'Username already exists';
 		}
 	}
 </script>
