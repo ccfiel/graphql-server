@@ -127,3 +127,21 @@ builder.mutationField('signup', t =>
     },
   }),
 )
+
+builder.mutationField('logout', t =>
+  t.field({
+    type: 'Boolean',
+    resolve: async (_, args, context) => {
+      if (!context.currentSession?.sessionId === undefined) {
+        try {
+          await auth.invalidateSession(context.currentSession.sessionId)
+          return true
+        } catch (error: any) {
+          return Promise.reject(new GraphQLError(error.message))
+        }
+      } else {
+        return Promise.reject(new GraphQLError('Invalid session'))
+      }
+    },
+  }),
+)

@@ -6,6 +6,7 @@ scalar DateTime
 scalar Json
 
 type Mutation {
+  logout: Boolean!
   signin(password: String, username: String): Session!
   signup(password: String, username: String): Session!
 }
