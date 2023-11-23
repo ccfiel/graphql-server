@@ -1,7 +1,7 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { auth } from '../../db'
 import { builder } from '../../builder'
 import { GraphQLError } from 'graphql'
-
 
 const UserType = builder.simpleObject('User', {
   fields: t => ({
@@ -43,7 +43,7 @@ async function signIn(username: string, password: string) {
     userId: key.userId,
     attributes: {},
   })
-  
+
   return session
 }
 
@@ -83,8 +83,8 @@ builder.mutationField('signin', t =>
           state: session.state,
           fresh: session.fresh,
         }
-      } catch (error) {
-        throw error
+      } catch (error: any) {
+        return Promise.reject(new GraphQLError(error.message))
       }
     },
   }),
@@ -121,11 +121,8 @@ builder.mutationField('signup', t =>
           state: session.state,
           fresh: session.fresh,
         }
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } catch (error: any) {
-        return Promise.reject(
-          new GraphQLError(error.message)
-        )
+        return Promise.reject(new GraphQLError(error.message))
       }
     },
   }),

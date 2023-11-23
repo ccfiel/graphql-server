@@ -19,6 +19,9 @@
 				errorMessage = res.errors[0].message;
 			}
 		}
+		if (errorMessage == 'AUTH_INVALID_KEY_ID') {
+			errorMessage = 'Username or password is incorrect';
+		}
 	}
 </script>
 
