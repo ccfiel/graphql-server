@@ -1,5 +1,10 @@
 <script lang="ts">
-    function onSignUp(event: Event) {
+    import { SignUpStore } from "$houdini";
+
+    const signup = new SignUpStore()
+
+
+    async function onSignUp(event: Event) {
         event.preventDefault();
         const target = event.target as typeof event.target & {
             username: { value: string };
@@ -8,7 +13,8 @@
         const username = target.username.value;
         const password = target.password.value;
 		console.log('onSignUp', username, password)
-		// Handle sign up logic here
+        const res = await signup.mutate({ username, password });
+        console.log('res', res)
     }
 </script>
 
