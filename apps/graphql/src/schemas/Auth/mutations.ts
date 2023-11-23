@@ -132,8 +132,9 @@ builder.mutationField('logout', t =>
   t.field({
     type: 'Boolean',
     resolve: async (_, args, context) => {
-      if (!context.currentSession?.sessionId === undefined) {
+      if (context.currentSession?.sessionId) {
         try {
+          console.log('im here')
           await auth.invalidateSession(context.currentSession.sessionId)
           return true
         } catch (error: any) {
