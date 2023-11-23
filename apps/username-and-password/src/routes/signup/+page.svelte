@@ -1,5 +1,7 @@
 <script lang="ts">
 	import { SignUpStore } from '$houdini';
+    import { user } from '$lib/store';
+    import { goto } from '$app/navigation';
 
 	const signup = new SignUpStore();
 	let errorMessage: string = '';
@@ -18,10 +20,13 @@
 			if (res.errors && res.errors.length > 0) {
 				errorMessage = res.errors[0].message;
 			}
-		}
-		if (errorMessage == 'AUTH_DUPLICATE_KEY_ID') {
-			errorMessage = 'Username already exists';
-		}
+			if (errorMessage == 'AUTH_DUPLICATE_KEY_ID') {
+				errorMessage = 'Username already exists';
+			}
+		} else {
+            user.set({ id: res.data?.signup.user.userId ?? '', sessionId: res.data?.signup.sessionId ?? '', name: username });
+            goto('/');
+        }
 	}
 </script>
 

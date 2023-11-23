@@ -1,7 +1,9 @@
 <script lang="ts">
-	import { SignInStore } from "$houdini";
+	import { SignInStore } from '$houdini';
+	import { user } from '$lib/store';
+    import { goto } from '$app/navigation';
 
-	const signin = new SignInStore()
+	const signin = new SignInStore();
 	let errorMessage: string = '';
 
 	async function onSignIn(event: Event) {
@@ -18,9 +20,16 @@
 			if (res.errors && res.errors.length > 0) {
 				errorMessage = res.errors[0].message;
 			}
-		}
-		if (errorMessage == 'AUTH_INVALID_KEY_ID') {
-			errorMessage = 'Username or password is incorrect';
+			if (errorMessage == 'AUTH_INVALID_KEY_ID') {
+				errorMessage = 'Username or password is incorrect';
+			}
+		} else {
+			user.set({
+				id: res.data?.signin.user.userId ?? '',
+				sessionId: res.data?.signin.sessionId ?? '',
+				name: username
+			});
+			goto('/');
 		}
 	}
 </script>

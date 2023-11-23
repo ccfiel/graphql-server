@@ -1,14 +1,23 @@
 <script lang="ts">
-	import { enhance } from '$app/forms';
+	import { user } from '$lib/store';
+	import { goto } from '$app/navigation';
+	import { browser } from '$app/environment';
 
-	import type { PageData } from './$types';
+	async function onLogOut(event: Event) {
+		event.preventDefault();
+	}
 
-	export let data: PageData;
+	user.subscribe((value) => {
+		if (!value.sessionId && browser) {
+			goto('/login');
+		}
+	});
+
 </script>
 
 <h1>Profile</h1>
-<p>User id: {data.userId}</p>
-<p>Username: {data.username}</p>
-<form method="post" action="?/logout" use:enhance>
+<p>User id: {$user.id}</p>
+<p>Username: {$user.name}</p>
+<form method="post" action="?/logout" on:submit={onLogOut}>
 	<input type="submit" value="Sign out" />
 </form>
