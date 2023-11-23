@@ -3,7 +3,7 @@ import { HoudiniClient } from '$houdini';
 import { get } from 'svelte/store';
 import { user } from '$lib/store';
 
-function headerData(session: any) {
+function headerData() {
     const data =  get(user)
     if (data?.sessionId) {
         return {
@@ -18,7 +18,7 @@ function headerData(session: any) {
 }
 export default new HoudiniClient({
     url: 'http://localhost:8080',
-    fetchParams({ session }) {
-        return headerData(session)
+    fetchParams() {
+        return headerData()
     }
 })

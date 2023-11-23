@@ -14,17 +14,8 @@ import { Session } from 'lucia'
 const app = express()
 
 async function getSession(req: any): Promise<Session | null> {
-  
-  if (req.headers.get('authorization')!==null) {
-    console.log('req', req.headers.get('authorization'))
-  }
-
   const authRequest = auth.handleRequest(req)
   const session = await authRequest.validateBearerToken()
-  if (req.headers.get('authorization')!==null) {
-    console.log('req', req.headers.get('authorization'))
-    console.log('session', session)
-  }
 
   if (session) {
     return session
