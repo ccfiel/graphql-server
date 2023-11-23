@@ -2,7 +2,7 @@
     import { SignUpStore } from "$houdini";
 
     const signup = new SignUpStore()
-
+    let errorMessage: string = '';
 
     async function onSignUp(event: Event) {
         event.preventDefault();
@@ -14,7 +14,11 @@
         const password = target.password.value;
 		console.log('onSignUp', username, password)
         const res = await signup.mutate({ username, password });
-        console.log('res', res)
+        if (res.errors?.length ?? 0 > 0) {
+            if (res.errors && res.errors.length > 0 && res.errors[0].message === 'AUTH_DUPLICATE_KEY_ID') {
+                errorMessage = 'Username already exists'
+            }
+        }
     }
 </script>
 
@@ -26,7 +30,7 @@
 	<input type="password" name="password" id="password" /><br />
 	<input type="submit" />
 </form>
-<!-- {#if form?.message}
-	<p class="error">{form.message}</p>
-{/if} -->
+{#if errorMessage}
+	<p class="error">{errorMessage}</p>
+{/if}
 <a href="/login">Sign in</a>

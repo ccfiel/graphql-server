@@ -1,5 +1,7 @@
 import { auth } from '../../db'
 import { builder } from '../../builder'
+import { GraphQLError } from 'graphql'
+
 
 const UserType = builder.simpleObject('User', {
   fields: t => ({
@@ -82,7 +84,7 @@ builder.mutationField('signin', t =>
           fresh: session.fresh,
         }
       } catch (error) {
-        throw new Error('Authentication failed')
+        throw error
       }
     },
   }),
@@ -119,9 +121,11 @@ builder.mutationField('signup', t =>
           state: session.state,
           fresh: session.fresh,
         }
-      } catch (error) {
-        console.error(error)
-        throw new Error('Authentication failed')
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      } catch (error: any) {
+        return Promise.reject(
+          new GraphQLError(error.message)
+        )
       }
     },
   }),
