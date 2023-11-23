@@ -6,22 +6,22 @@ scalar DateTime
 scalar Json
 
 type Mutation {
-  logout: Boolean!
-  signin(password: String, username: String): Session!
-  signup(password: String, username: String): Session!
+	logout: Boolean!
+	signin(password: String, username: String): Session!
+	signup(password: String, username: String): Session!
 }
 
 type Query {
-  version: String!
+	version: String!
 }
 
 type Session {
-  activePeriodExpiresAt: DateTime!
-  fresh: Boolean!
-  idlePeriodExpiresAt: DateTime!
-  sessionId: String!
-  state: String!
-  user: User!
+	activePeriodExpiresAt: DateTime!
+	fresh: Boolean!
+	idlePeriodExpiresAt: DateTime!
+	sessionId: String!
+	state: String!
+	user: User!
 }
 
 scalar ToObject
@@ -29,5 +29,5 @@ scalar ToObject
 scalar ToString
 
 type User {
-  userId: String!
+	userId: String!
 }

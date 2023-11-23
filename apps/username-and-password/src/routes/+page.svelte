@@ -22,7 +22,6 @@
 			goto('/login');
 		}
 	});
-
 </script>
 
 <h1>Profile</h1>

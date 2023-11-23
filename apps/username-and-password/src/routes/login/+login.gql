@@ -1,8 +1,8 @@
 mutation SignIn($username: String!, $password: String!) {
-    signin(username: $username, password: $password) {
-        sessionId
-        user {
-            userId
-        }
-    }
+	signin(username: $username, password: $password) {
+		sessionId
+		user {
+			userId
+		}
+	}
 }

@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { SignInStore } from '$houdini';
 	import { user } from '$lib/store';
-    import { goto } from '$app/navigation';
+	import { goto } from '$app/navigation';
 
 	const signin = new SignInStore();
 	let errorMessage: string = '';

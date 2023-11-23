@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { SignUpStore } from '$houdini';
-    import { user } from '$lib/store';
-    import { goto } from '$app/navigation';
+	import { user } from '$lib/store';
+	import { goto } from '$app/navigation';
 
 	const signup = new SignUpStore();
 	let errorMessage: string = '';
@@ -24,9 +24,13 @@
 				errorMessage = 'Username already exists';
 			}
 		} else {
-            user.set({ id: res.data?.signup.user.userId ?? '', sessionId: res.data?.signup.sessionId ?? '', name: username });
-            goto('/');
-        }
+			user.set({
+				id: res.data?.signup.user.userId ?? '',
+				sessionId: res.data?.signup.sessionId ?? '',
+				name: username
+			});
+			goto('/');
+		}
 	}
 </script>
 
