@@ -199,3 +199,18 @@ builder.mutationField('logout', t =>
     },
   }),
 )
+
+
+builder.mutationField('generateEmailVerificationToken', t =>
+  t.field({
+    type: 'String',
+    args: {
+      userId: t.arg.string({}),
+    },
+    resolve: async (_, args) => {
+      const { userId } = args
+      const token = await generateEmailVerificationToken(userId ?? '')
+      return token
+    },
+  }),
+)

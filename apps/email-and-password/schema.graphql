@@ -6,6 +6,7 @@ scalar DateTime
 scalar Json
 
 type Mutation {
+  generateEmailVerificationToken(userId: String): String!
   logout: Boolean!
   signin(password: String, username: String): Session!
   signupWithEmail(email: String, password: String): Session!
