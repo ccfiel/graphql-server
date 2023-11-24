@@ -6,14 +6,10 @@ scalar DateTime
 scalar Json
 
 type Mutation {
-  generateEmailVerificationToken(userId: String): String!
-  generatePasswordResetToken: String!
-  isValidPasswordResetToken(token: String): Boolean!
   logout: Boolean!
   signin(password: String, username: String): Session!
-  signup(password: String, username: String): Session!
-  validateEmailVerificationToken(token: String): String!
-  validatePasswordResetToken(token: String): String!
+  signupWithEmail(email: String, password: String): Session!
+  signupWithUserName(password: String, username: String): Session!
 }
 
 type Query {

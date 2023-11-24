@@ -9,10 +9,10 @@
 	async function onSignUp(event: Event) {
 		event.preventDefault();
 		const target = event.target as typeof event.target & {
-			username: { value: string };
+			email: { value: string };
 			password: { value: string };
 		};
-		const username = target.username.value;
+		const email = target.email.value;
 		const password = target.password.value;
 
 		const res = await signup.mutate({ username, password });
@@ -36,7 +36,7 @@
 
 <h1>Sign up</h1>
 <form method="post" on:submit={onSignUp}>
-	<label for="username">Username</label>
+	<label for="email">Email</label>
 	<input name="username" id="username" /><br />
 	<label for="password">Password</label>
 	<input type="password" name="password" id="password" /><br />
