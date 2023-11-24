@@ -63,6 +63,12 @@ importers:
       eslint-plugin-svelte:
         specifier: ^2.35.1
         version: 2.35.1(eslint@8.54.0)(svelte@4.2.7)
+      houdini:
+        specifier: ^1.2.33
+        version: 1.2.33
+      houdini-svelte:
+        specifier: ^1.2.33
+        version: 1.2.33
       prettier:
         specifier: ^3.1.0
         version: 3.1.0
