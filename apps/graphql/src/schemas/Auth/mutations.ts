@@ -1,7 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { auth } from '../../db'
+import { auth, db } from '../../db'
 import { builder } from '../../builder'
 import { GraphQLError } from 'graphql'
+import { generateRandomString, isWithinExpiration } from 'lucia/utils'
+
+const EXPIRES_IN = 1000 * 60 * 60 * 2 // 2 hours
 
 const UserType = builder.simpleObject('User', {
   fields: t => ({
@@ -134,7 +137,6 @@ builder.mutationField('logout', t =>
     resolve: async (_, args, context) => {
       if (context.currentSession?.sessionId) {
         try {
-          console.log('im here')
           await auth.invalidateSession(context.currentSession.sessionId)
           return true
         } catch (error: any) {
@@ -143,6 +145,193 @@ builder.mutationField('logout', t =>
       } else {
         return Promise.reject(new GraphQLError('Invalid session'))
       }
+    },
+  }),
+)
+
+builder.mutationField('generateEmailVerificationToken', t =>
+  t.field({
+    type: 'String',
+    args: {
+      userId: t.arg.string({}),
+    },
+    resolve: async (_, args) => {
+      const { userId } = args
+
+      const aggregations = await db.emailVerificationToken.aggregate({
+        _count: {
+          _all: true,
+        },
+        where: {
+          user_id: {
+            equals: userId ?? '',
+          },
+        },
+      })
+
+      if (aggregations._count._all > 0) {
+        const reusableStoredToken = await db.emailVerificationToken.findFirst({
+          where: {
+            user_id: {
+              equals: userId ?? '',
+            },
+          },
+        })
+
+        if (reusableStoredToken) {
+          if (isWithinExpiration(Number(reusableStoredToken.expires) - EXPIRES_IN / 2)) return reusableStoredToken.id
+        }
+      }
+      const token = generateRandomString(63)
+      await db.emailVerificationToken.create({
+        data: {
+          id: token,
+          expires: new Date().getTime() + EXPIRES_IN,
+          user_id: userId ?? '',
+        },
+      })
+      return token
+    },
+  }),
+)
+
+builder.mutationField('validateEmailVerificationToken', t =>
+  t.field({
+    type: 'String',
+    args: {
+      token: t.arg.string({}),
+    },
+    resolve: async (_, args) => {
+      const { token } = args
+      const storedToken = await db.emailVerificationToken.findFirst({
+        where: {
+          id: {
+            equals: token ?? '',
+          },
+        },
+      })
+
+      if (!storedToken) throw new Error('Invalid token')
+
+      await db.emailVerificationToken.deleteMany({
+        where: {
+          user_id: {
+            equals: storedToken.user_id,
+          },
+        },
+      })
+
+      const tokenExpires = Number(storedToken.expires) // bigint => number conversion
+      if (!isWithinExpiration(tokenExpires)) {
+        throw new Error('Expired token')
+      }
+
+      return storedToken.user_id
+    },
+  }),
+)
+
+builder.mutationField('generatePasswordResetToken', t =>
+  t.field({
+    type: 'String',
+    resolve: async (_, args, context) => {
+      const aggregations = await db.passwordResetToken.aggregate({
+        _count: {
+          _all: true,
+        },
+        where: {
+          user_id: {
+            equals: context.currentSession.user.userId ?? '',
+          },
+        },
+      })
+
+      if (aggregations._count._all > 0) {
+        const reusableStoredToken = await db.passwordResetToken.findFirst({
+          where: {
+            user_id: {
+              equals: context.currentSession.user.userId ?? '',
+            },
+          },
+        })
+
+        if (reusableStoredToken) {
+          if (isWithinExpiration(Number(reusableStoredToken.expires) - EXPIRES_IN / 2)) return reusableStoredToken.id
+        }
+      }
+      const token = generateRandomString(63)
+      await db.passwordResetToken.create({
+        data: {
+          id: token,
+          expires: new Date().getTime() + EXPIRES_IN,
+          user_id: context.currentSession.user.userId ?? '',
+        },
+      })
+      return token
+    },
+  }),
+)
+
+builder.mutationField('validatePasswordResetToken', t =>
+  t.field({
+    type: 'String',
+    args: {
+      token: t.arg.string({}),
+    },
+    resolve: async (_, args) => {
+      const { token } = args
+      const storedToken = await db.emailVerificationToken.findFirst({
+        where: {
+          id: {
+            equals: token ?? '',
+          },
+        },
+      })
+
+      if (!storedToken) throw new Error('Invalid token')
+
+      await db.passwordResetToken.deleteMany({
+        where: {
+          user_id: {
+            equals: storedToken.user_id,
+          },
+        },
+      })
+
+      const tokenExpires = Number(storedToken.expires) // bigint => number conversion
+
+      if (!isWithinExpiration(tokenExpires)) {
+        throw new Error('Expired token')
+      }
+
+      return storedToken.user_id
+    },
+  }),
+)
+
+builder.mutationField('isValidPasswordResetToken', t =>
+  t.field({
+    type: 'Boolean',
+    args: {
+      token: t.arg.string({}),
+    },
+    resolve: async (_, args) => {
+      const { token } = args
+      const storedToken = await db.emailVerificationToken.findFirst({
+        where: {
+          id: {
+            equals: token ?? '',
+          },
+        },
+      })
+
+      if (!storedToken) return false
+
+      const tokenExpires = Number(storedToken.expires) // bigint => number conversion
+      if (!isWithinExpiration(tokenExpires)) {
+        return false
+      }
+      return true
     },
   }),
 )

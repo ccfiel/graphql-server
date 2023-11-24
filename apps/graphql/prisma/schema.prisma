@@ -11,17 +11,18 @@ datasource db {
 }
 
 generator pothos {
-  provider     = "prisma-pothos-types"
-  output       = "./generated.d.ts"
-  prismaUtils  = true
-
+  provider    = "prisma-pothos-types"
+  output      = "./generated.d.ts"
+  prismaUtils = true
 }
 
 model User {
-  id           String    @id @unique
+  id String @id @unique
 
-  auth_session Session[]
-  key          Key[]
+  auth_session           Session[]
+  key                    Key[]
+  EmailVerificationToken EmailVerificationToken[]
+  PasswordResetToken     PasswordResetToken[]
 }
 
 model Session {
@@ -39,6 +40,24 @@ model Key {
   hashed_password String?
   user_id         String
   user            User    @relation(references: [id], fields: [user_id], onDelete: Cascade)
+
+  @@index([user_id])
+}
+
+model EmailVerificationToken {
+  id      String @id @unique
+  user_id String
+  expires BigInt
+  user    User   @relation(references: [id], fields: [user_id], onDelete: Cascade)
+
+  @@index([user_id])
+}
+
+model PasswordResetToken {
+  id      String @id @unique
+  user_id String
+  expires BigInt
+  user    User   @relation(references: [id], fields: [user_id], onDelete: Cascade)
 
   @@index([user_id])
 }
