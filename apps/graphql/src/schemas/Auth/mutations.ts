@@ -209,6 +209,7 @@ builder.mutationField('generateEmailVerificationToken', t =>
     type: 'String',
     resolve: async (_, args, context) => {
       const token = await generateEmailVerificationToken(context.currentSession.user.userId ?? '')
+      await sendEmailVerificationLink(token);
       return token
     },
   }),
