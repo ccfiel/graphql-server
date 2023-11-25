@@ -23,7 +23,7 @@
 		if (!value.sessionId && browser) {
 			console.log('goto login');
 			goto('/login');
-		}
+		} else
 		if (!value.emailVerified && browser) {
 			console.log('goto email-verification');
 			goto('/email-verification');
