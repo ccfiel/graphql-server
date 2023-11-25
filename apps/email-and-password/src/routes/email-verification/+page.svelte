@@ -1,9 +1,15 @@
 <script lang="ts">
-	import { enhance } from '$app/forms';
+	import { goto } from '$app/navigation';
+	import { browser } from '$app/environment';
+	import { user } from '$lib/store';
+	import { z } from '$houdini';
 
-	import type { ActionData } from './$types';
+	user.subscribe((value) => {
+		if (!value.sessionId && browser) {
+			goto('/login');
+		}
+	});
 
-	export let form: ActionData;
 </script>
 
 <h1>Email verification</h1>

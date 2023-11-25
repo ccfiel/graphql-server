@@ -15,7 +15,7 @@
 		const email = target.email.value;
 		const password = target.password.value;
 
-		const res = await signup.mutate({ username, password });
+		const res = await signup.mutate({ email, password });
 		if (res.errors?.length ?? 0 > 0) {
 			if (res.errors && res.errors.length > 0) {
 				errorMessage = res.errors[0].message;
@@ -25,10 +25,12 @@
 			}
 		} else {
 			user.set({
-				id: res.data?.signup.user.userId ?? '',
-				sessionId: res.data?.signup.sessionId ?? '',
-				name: username
+				id: res.data?.signupWithEmail.user.userId ?? '',
+				sessionId: res.data?.signupWithEmail.sessionId ?? '',
+				name: email,
+				emailVerified: false,
 			});
+			console.log('Signed up');
 			goto('/');
 		}
 	}
@@ -37,7 +39,7 @@
 <h1>Sign up</h1>
 <form method="post" on:submit={onSignUp}>
 	<label for="email">Email</label>
-	<input name="username" id="username" /><br />
+	<input name="email" id="email" /><br />
 	<label for="password">Password</label>
 	<input type="password" name="password" id="password" /><br />
 	<input type="submit" />

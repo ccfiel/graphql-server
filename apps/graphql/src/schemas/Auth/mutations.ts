@@ -152,7 +152,7 @@ builder.mutationField('signupWithEmail', t =>
           },
           attributes: {
             email: email.toLowerCase(),
-            email_verified: Number(false),
+            email_verified: false,
           },
         })
 
@@ -203,13 +203,12 @@ builder.mutationField('logout', t =>
 
 builder.mutationField('generateEmailVerificationToken', t =>
   t.field({
-    type: 'String',
-    args: {
-      userId: t.arg.string({}),
+    authScopes: {
+      isAuthenticated: true,
     },
-    resolve: async (_, args) => {
-      const { userId } = args
-      const token = await generateEmailVerificationToken(userId ?? '')
+    type: 'String',
+    resolve: async (_, args, context) => {
+      const token = await generateEmailVerificationToken(context.currentSession.user.userId ?? '')
       return token
     },
   }),
