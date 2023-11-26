@@ -4,6 +4,7 @@ mutation SignIn($username: String!, $password: String!) {
 		user {
 			userId
 			email
+			emailVerified
 		}
 	}
 }

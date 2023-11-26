@@ -9,21 +9,23 @@
 	async function onSignIn(event: Event) {
 		event.preventDefault();
 		const target = event.target as typeof event.target & {
-			username: { value: string };
+			email: { value: string };
 			password: { value: string };
 		};
-		const username = target.username.value;
+		const email = target.email.value;
 		const password = target.password.value;
 
-		const res = await signin.mutate({ username, password });
+		const res = await signin.mutate({ username: email, password });
 		if (res.errors?.length ?? 0 > 0) {
 			if (res.errors && res.errors.length > 0) {
 				errorMessage = res.errors[0].message;
 			}
-			if (errorMessage == 'AUTH_INVALID_KEY_ID') {
+			if (errorMessage == 'AUTH_INVALID_KEY_ID' || errorMessage == 'AUTH_INVALID_PASSWORD') {
 				errorMessage = 'Username or password is incorrect';
 			}
 		} else {
+			console.log('xxxxxxxx')
+			console.log(res.data?.signin.user.emailVerified);
 			user.set({
 				id: res.data?.signin.user.userId ?? '',
 				sessionId: res.data?.signin.sessionId ?? '',
