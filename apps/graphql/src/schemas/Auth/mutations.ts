@@ -1,18 +1,24 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { auth } from '../../db'
+import { auth, db } from '../../db'
 import { builder } from '../../builder'
 import { GraphQLError } from 'graphql'
 import { isValidEmail } from '../../utils/email'
 import { generateEmailVerificationToken } from '../../utils/token'
 import { sendEmailVerificationLink } from '../../utils/email'
+import { validateEmailVerificationToken } from '../../utils/token'
 
-const UserType = builder.simpleObject('User', {
+const UserType = builder.simpleObject('UserType', {
   fields: t => ({
     userId: t.string({
       nullable: false,
     }),
+    email: t.string({
+      nullable: true,
+    }),
   }),
 })
+
+
 
 const SessionType = builder.simpleObject('Session', {
   fields: t => ({
@@ -49,7 +55,6 @@ async function signIn(username: string, password: string) {
 
   return session
 }
-
 
 builder.mutationField('signin', t =>
   t.field({
@@ -164,7 +169,7 @@ builder.mutationField('signupWithEmail', t =>
           throw new Error('Cannot create session')
         }
         const token = await generateEmailVerificationToken(user.userId)
-        await sendEmailVerificationLink(token);
+        await sendEmailVerificationLink(token)
         return {
           user: {
             userId: session.user.userId,
@@ -200,7 +205,6 @@ builder.mutationField('logout', t =>
   }),
 )
 
-
 builder.mutationField('generateEmailVerificationToken', t =>
   t.field({
     authScopes: {
@@ -209,8 +213,57 @@ builder.mutationField('generateEmailVerificationToken', t =>
     type: 'String',
     resolve: async (_, args, context) => {
       const token = await generateEmailVerificationToken(context.currentSession.user.userId ?? '')
-      await sendEmailVerificationLink(token);
+      await sendEmailVerificationLink(token)
       return token
     },
   }),
 )
+
+builder.mutationField('validateEmailVerificationToken', t =>
+  t.field({
+    type: SessionType,
+    args: {
+      token: t.arg.string({}),
+    },
+    resolve: async (_, args) => {
+      const { token } = args
+      try {
+        const userId = await validateEmailVerificationToken(token ?? '')
+        const user = await auth.getUser(userId)
+        const userData = await db.user.findUnique({
+          where: {
+            id: user.userId,
+          },
+        })
+        console.log('user', user)
+        await auth.invalidateAllUserSessions(user.userId)
+        await auth.updateUserAttributes(user.userId, {
+          email_verified: true,
+        })
+        const session = await auth.createSession({
+          userId: user.userId,
+          attributes: {},
+        })
+        if (!session) {
+          throw new Error('Cannot create session')
+        }
+        return {
+          user: {
+            userId: session.user.userId,
+            email: userData?.email ?? '',
+          },
+          sessionId: session.sessionId,
+          idlePeriodExpiresAt: session.idlePeriodExpiresAt,
+          activePeriodExpiresAt: session.activePeriodExpiresAt,
+          state: session.state,
+          fresh: session.fresh,
+        }
+      } catch (error: any) {
+        console.log('error!')
+        return Promise.reject(new GraphQLError(error.message))
+      }
+    },
+  }),
+)
+
+

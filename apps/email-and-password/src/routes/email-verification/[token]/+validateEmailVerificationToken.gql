@@ -1,0 +1,9 @@
+mutation ValidateEmailVerificationToken($token: String!) {
+	validateEmailVerificationToken(token: $token) {
+		sessionId
+		user {
+			userId
+			email
+		}
+	}
+}

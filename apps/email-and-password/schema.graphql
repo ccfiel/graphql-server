@@ -11,6 +11,7 @@ type Mutation {
   signin(password: String, username: String): Session!
   signupWithEmail(email: String, password: String): Session!
   signupWithUserName(password: String, username: String): Session!
+  validateEmailVerificationToken(token: String): Session!
 }
 
 type Query {
@@ -23,13 +24,14 @@ type Session {
   idlePeriodExpiresAt: DateTime!
   sessionId: String!
   state: String!
-  user: User!
+  user: UserType!
 }
 
 scalar ToObject
 
 scalar ToString
 
-type User {
+type UserType {
+  email: String
   userId: String!
 }
