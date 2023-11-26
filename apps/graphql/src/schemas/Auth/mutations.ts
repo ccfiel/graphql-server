@@ -260,7 +260,6 @@ builder.mutationField('validateEmailVerificationToken', t =>
           fresh: session.fresh,
         }
       } catch (error: any) {
-        console.log('error!')
         return Promise.reject(new GraphQLError(error.message))
       }
     },
