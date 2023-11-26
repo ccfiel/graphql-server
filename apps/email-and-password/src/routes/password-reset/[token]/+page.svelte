@@ -14,8 +14,6 @@
 
 		const store = new ChangePasswordStore();
 		const res = await store.mutate({ password, token: $page.params.token });
-		console.log('res');
-		console.log(res);
 		if (res.errors?.length ?? 0 > 0) {
 			if (res.errors && res.errors.length > 0) {
 				errorMessage = res.errors[0].message;
