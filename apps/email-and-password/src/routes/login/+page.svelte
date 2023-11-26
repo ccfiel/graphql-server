@@ -24,8 +24,6 @@
 				errorMessage = 'Username or password is incorrect';
 			}
 		} else {
-			console.log('xxxxxxxx')
-			console.log(res.data?.signin.user.emailVerified);
 			user.set({
 				id: res.data?.signin.user.userId ?? '',
 				sessionId: res.data?.signin.sessionId ?? '',
