@@ -71,6 +71,7 @@ builder.mutationField('signin', t =>
       const { username, password, providerId } = args
       try {
         const session = await signIn(providerId!, username!, password!)
+        console.log('session', session)
         if (!session.user.userId) {
           throw new Error('Authentication failed')
         }
