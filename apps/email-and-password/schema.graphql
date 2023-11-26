@@ -8,7 +8,7 @@ scalar Json
 type Mutation {
   generateEmailVerificationToken: String!
   logout: Boolean!
-  signin(password: String, username: String): Session!
+  signin(password: String, providerId: String, username: String): Session!
   signupWithEmail(email: String, password: String): Session!
   signupWithUserName(password: String, username: String): Session!
   validateEmailVerificationToken(token: String): Session!
@@ -33,5 +33,6 @@ scalar ToString
 
 type UserType {
   email: String
+  emailVerified: Boolean
   userId: String!
 }

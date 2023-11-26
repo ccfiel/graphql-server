@@ -1,8 +1,9 @@
 mutation SignIn($username: String!, $password: String!) {
-	signin(providerId: "username", username: $username, password: $password) {
+	signin(providerId: "email", username: $username, password: $password) {
 		sessionId
 		user {
 			userId
+			email
 		}
 	}
 }

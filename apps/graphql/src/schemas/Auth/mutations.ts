@@ -15,6 +15,9 @@ const UserType = builder.simpleObject('UserType', {
     email: t.string({
       nullable: true,
     }),
+    emailVerified: t.boolean({
+      nullable: true,
+    }),
   }),
 })
 
@@ -46,8 +49,8 @@ const SessionType = builder.simpleObject('Session', {
   }),
 })
 
-async function signIn(username: string, password: string) {
-  const key = await auth.useKey('username', username, password)
+async function signIn(providerId: string, username: string, password: string) {
+  const key = await auth.useKey(providerId, username, password)
   const session = await auth.createSession({
     userId: key.userId,
     attributes: {},
@@ -60,19 +63,22 @@ builder.mutationField('signin', t =>
   t.field({
     type: SessionType,
     args: {
+      providerId: t.arg.string({}),
       username: t.arg.string({}),
       password: t.arg.string({}),
     },
     resolve: async (_, args) => {
-      const { username, password } = args
+      const { username, password, providerId } = args
       try {
-        const session = await signIn(username!, password!)
+        const session = await signIn(providerId!, username!, password!)
         if (!session.user.userId) {
           throw new Error('Authentication failed')
         }
         return {
           user: {
             userId: session.user.userId,
+            email: session.user.email ?? '',
+            emailVerified: session.user.emailVerified ?? false,
           },
           sessionId: session.sessionId,
           idlePeriodExpiresAt: session.idlePeriodExpiresAt,

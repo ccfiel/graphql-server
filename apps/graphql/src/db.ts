@@ -14,6 +14,7 @@ export const auth = lucia({
   getUserAttributes: (databaseUser) => {
 		return {
 			email: databaseUser.email,
+      emailVerified: databaseUser.emailVerified,
 		};
 	},
   middleware: web(),
