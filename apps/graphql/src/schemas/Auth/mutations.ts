@@ -1,11 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { auth } from '../../db'
+import { auth, db } from '../../db'
 import { builder } from '../../builder'
 import { GraphQLError } from 'graphql'
 import { isValidEmail } from '../../utils/email'
 import { generateEmailVerificationToken } from '../../utils/token'
-import { sendEmailVerificationLink } from '../../utils/email'
-import { validateEmailVerificationToken } from '../../utils/token'
+import { sendEmailVerificationLink, sendPasswordResetLink } from '../../utils/email'
+import { validateEmailVerificationToken, generatePasswordResetToken, validatePasswordResetToken } from '../../utils/token'
 
 const UserType = builder.simpleObject('UserType', {
   fields: t => ({
@@ -266,4 +266,71 @@ builder.mutationField('validateEmailVerificationToken', t =>
   }),
 )
 
+builder.mutationField('generatePasswordResetToken', t =>
+  t.field({
+    type: 'String',
+    args: {
+      email: t.arg.string({}),
+    },
+    resolve: async (_, args ) => {
+      const { email } = args
+      if (!isValidEmail(email)) {
+        return Promise.reject(new GraphQLError('Invalid email'))
+      }
 
+      const user = await db.user.findFirst({
+        where: {
+          email: email.toLowerCase(),
+        },
+      })
+			const token = await generatePasswordResetToken(user?.id ?? '');
+			await sendPasswordResetLink(token);
+      return token
+    },
+  }),
+)
+
+builder.mutationField('changePassword', t =>
+  t.field({
+    type: SessionType,
+    args: {
+      token: t.arg.string({}),
+      password: t.arg.string({}),
+    },
+    resolve: async (_, args) => {
+      const { token, password } = args
+      if (typeof password !== 'string' || password.length < 6 || password.length > 255) {
+        return Promise.reject(new GraphQLError('Invalid password'))
+      }
+      try {
+        const userId = await validatePasswordResetToken(token ?? '')
+        const user = await auth.getUser(userId)
+        await auth.invalidateAllUserSessions(user.userId)
+        await auth.updateKeyPassword('email', user.email, password);
+        await auth.updateUserAttributes(user.userId, {
+          email_verified: true,
+        })
+        const session = await auth.createSession({
+          userId: user.userId,
+          attributes: {},
+        })
+        if (!session) {
+          throw new Error('Cannot create session')
+        }
+        return {
+          user: {
+            userId: session.user.userId,
+            email: user.email ?? '',
+          },
+          sessionId: session.sessionId,
+          idlePeriodExpiresAt: session.idlePeriodExpiresAt,
+          activePeriodExpiresAt: session.activePeriodExpiresAt,
+          state: session.state,
+          fresh: session.fresh,
+        }
+      } catch (error: any) {
+        return Promise.reject(new GraphQLError(error.message))
+      }
+    },
+  }),
+)

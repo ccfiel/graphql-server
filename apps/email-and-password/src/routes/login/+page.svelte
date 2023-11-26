@@ -46,4 +46,5 @@
 {#if errorMessage}
 	<p class="error">{errorMessage}</p>
 {/if}
+<a href="/password-reset">Reset password</a>
 <a href="/signup">Create an account</a>

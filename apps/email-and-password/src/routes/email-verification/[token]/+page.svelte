@@ -5,7 +5,6 @@
     import { user } from '$lib/store';
     import { ValidateEmailVerificationTokenStore } from '$houdini';
 	import { page } from "$app/stores";
-    import { get } from 'svelte/store';
 
     onMount(async () => {
         if (!browser) return;

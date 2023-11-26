@@ -1,17 +1,40 @@
 <script lang="ts">
-	import { enhance } from '$app/forms';
+	import { ChangePasswordStore } from '$houdini'
+	import { page } from "$app/stores";
+	import { goto } from '$app/navigation';
 
-	import type { ActionData } from './$types';
+	let errorMessage: string = '';
 
-	export let form: ActionData;
+	async function onChangePassword(event: Event) {
+		event.preventDefault()
+		const target = event.target as typeof event.target & {
+			password: { value: string }
+		}
+		const password = target.password.value
+
+		const store = new ChangePasswordStore()
+		const res = await store.mutate({ password, token: $page.params.token })
+		console.log('res')
+		console.log(res)
+		if (res.errors?.length ?? 0 > 0) {
+			if (res.errors && res.errors.length > 0) {
+				errorMessage = res.errors[0].message
+			}
+			if (errorMessage == 'AUTH_INVALID_KEY_ID' || errorMessage == 'AUTH_INVALID_PASSWORD') {
+				errorMessage = 'Username or password is incorrect'
+			}
+		} 
+		// goto('/');
+	}
+
 </script>
 
 <h1>Reset password</h1>
-<form method="post" use:enhance>
+<form method="post" on:submit={onChangePassword}>
 	<label for="password">New Password</label>
 	<input name="password" id="password" /><br />
 	<input type="submit" />
 </form>
-{#if form?.message}
-	<p class="error">{form.message}</p>
+{#if errorMessage}
+	<p class="error">{errorMessage}</p>
 {/if}
