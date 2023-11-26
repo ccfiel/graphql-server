@@ -102,7 +102,7 @@ export const generatePasswordResetToken = async (userId: string) => {
 }
 
 export const validatePasswordResetToken = async (token: string) => {
-  const storedToken = await db.emailVerificationToken.findFirst({
+  const storedToken = await db.passwordResetToken.findFirst({
     where: {
       id: {
         equals: token ?? '',
