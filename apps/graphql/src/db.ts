@@ -11,6 +11,11 @@ export const auth = lucia({
     key: 'key',
     session: 'session',
   }),
+  getUserAttributes: (databaseUser) => {
+		return {
+			email: databaseUser.email,
+		};
+	},
   middleware: web(),
   env: 'DEV',
 })

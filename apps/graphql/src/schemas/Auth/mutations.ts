@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { auth, db } from '../../db'
+import { auth } from '../../db'
 import { builder } from '../../builder'
 import { GraphQLError } from 'graphql'
 import { isValidEmail } from '../../utils/email'
@@ -230,12 +230,7 @@ builder.mutationField('validateEmailVerificationToken', t =>
       try {
         const userId = await validateEmailVerificationToken(token ?? '')
         const user = await auth.getUser(userId)
-        const userData = await db.user.findUnique({
-          where: {
-            id: user.userId,
-          },
-        })
-        console.log('user', user)
+
         await auth.invalidateAllUserSessions(user.userId)
         await auth.updateUserAttributes(user.userId, {
           email_verified: true,
@@ -250,7 +245,7 @@ builder.mutationField('validateEmailVerificationToken', t =>
         return {
           user: {
             userId: session.user.userId,
-            email: userData?.email ?? '',
+            email: user.email ?? '',
           },
           sessionId: session.sessionId,
           idlePeriodExpiresAt: session.idlePeriodExpiresAt,
