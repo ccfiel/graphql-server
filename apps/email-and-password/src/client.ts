@@ -12,7 +12,6 @@ function headerData() {
 			}
 		};
 	} else {
-		console.log('no data');
 		return {};
 	}
 }

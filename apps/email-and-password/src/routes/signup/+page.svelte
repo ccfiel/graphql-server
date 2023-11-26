@@ -27,10 +27,9 @@
 			user.set({
 				id: res.data?.signupWithEmail.user.userId ?? '',
 				sessionId: res.data?.signupWithEmail.sessionId ?? '',
-				name: email,
+				email,
 				emailVerified: false,
 			});
-			console.log('Signed up');
 			goto('/');
 		}
 	}
