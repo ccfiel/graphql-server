@@ -10,12 +10,10 @@
 	onMount(async () => {
 		if (browser) {
 			const code = new URLSearchParams(window.location.search).get('code');
-			const state = new URLSearchParams(window.location.search).get('state');
 
 			const validateGitHubVerificationTokenStore = new ValidateGitHubVerificationTokenStore();
 			const res = await validateGitHubVerificationTokenStore.mutate({ token: code ?? '' });
-            console.log('res');
-            console.log(res);
+
 			if (res.errors && (res.errors?.length ?? 0 > 0)) {
 				goto('/login');
 			} else {
