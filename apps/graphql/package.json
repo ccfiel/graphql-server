@@ -18,6 +18,7 @@
   },
   "dependencies": {
     "@lucia-auth/adapter-prisma": "^3.0.2",
+    "@lucia-auth/oauth": "^3.5.0",
     "@pothos/core": "^3.38.0",
     "@pothos/plugin-prisma": "^3.61.0",
     "@pothos/plugin-prisma-utils": "^0.13.0",
@@ -33,6 +34,7 @@
     "graphql-subscriptions": "^2.0.0",
     "graphql-yoga": "^5.0.0",
     "lucia": "^2.7.4",
+    "providers": "link:@lucia-auth/oauth/providers",
     "tslib": "^2.6.2"
   },
   "devDependencies": {

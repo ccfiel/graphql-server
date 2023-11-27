@@ -14,6 +14,15 @@ export const GET = async ({ url, cookies, locals }) => {
 	const storedState = cookies.get('github_oauth_state');
 	const state = url.searchParams.get('state');
 	const code = url.searchParams.get('code');
+
+	console.log('server!!!');
+	console.log('storedState');
+	console.log(storedState);
+	console.log('state');
+	console.log(state);
+	console.log('code');
+	console.log(code);
+
 	// validate state
 	if (!storedState || !state || storedState !== state || !code) {
 		return new Response(null, {
@@ -23,6 +32,9 @@ export const GET = async ({ url, cookies, locals }) => {
 	try {
 		const { getExistingUser, githubUser, createUser } = await githubAuth.validateCallback(code);
 
+		console.log('githubUser');
+		console.log(githubUser);
+		
 		const getUser = async () => {
 			const existingUser = await getExistingUser();
 			if (existingUser) return existingUser;

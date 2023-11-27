@@ -1,0 +1,10 @@
+mutation ValidateGitHubVerificationToken($token: String!) {
+	validateGitHubVerificationToken(token: $token) {
+		sessionId
+		user {
+			userId
+			email
+			emailVerified
+		}
+	}
+}

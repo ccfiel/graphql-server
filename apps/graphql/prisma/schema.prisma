@@ -19,6 +19,7 @@ generator pothos {
 model User {
   id String @id @unique
 
+  username               String? @unique
   email                  String? @unique
   email_verified         Boolean @default(false)
   auth_session           Session[]

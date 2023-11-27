@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { auth, db } from '../../db'
+import { auth, db, githubAuth } from '../../db'
 import { builder } from '../../builder'
 import { GraphQLError } from 'graphql'
 import { isValidEmail } from '../../utils/email'
@@ -310,6 +310,56 @@ builder.mutationField('changePassword', t =>
         await auth.updateUserAttributes(user.userId, {
           email_verified: true,
         })
+        const session = await auth.createSession({
+          userId: user.userId,
+          attributes: {},
+        })
+        if (!session) {
+          throw new Error('Cannot create session')
+        }
+        return {
+          user: {
+            userId: session.user.userId,
+            email: user.email ?? '',
+          },
+          sessionId: session.sessionId,
+          idlePeriodExpiresAt: session.idlePeriodExpiresAt,
+          activePeriodExpiresAt: session.activePeriodExpiresAt,
+          state: session.state,
+          fresh: session.fresh,
+        }
+      } catch (error: any) {
+        return Promise.reject(new GraphQLError(error.message))
+      }
+    },
+  }),
+)
+
+builder.mutationField('validateGitHubVerificationToken', t =>
+  t.field({
+    type: SessionType,
+    args: {
+      token: t.arg.string({}),
+    },
+    resolve: async (_, args) => {
+      const { token } = args
+
+      try {
+        const { getExistingUser, githubUser, createUser } = await githubAuth.validateCallback(token ?? '');
+
+        const getUser = async () => {
+          const existingUser = await getExistingUser();
+          if (existingUser) return existingUser;
+          const user = await createUser({
+            attributes: {
+              username: githubUser.login
+            }
+          });
+          return user;
+        };
+    
+        const user = await getUser();
+
         const session = await auth.createSession({
           userId: user.userId,
           attributes: {},
