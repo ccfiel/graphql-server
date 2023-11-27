@@ -1,12 +1,10 @@
 <script>
 	import { browser } from '$app/environment';
 	import { onMount } from 'svelte';
-	import { get } from 'svelte/store';
 	import { ValidateGitHubVerificationTokenStore } from '$houdini';
     import { goto } from '$app/navigation';
     import { user } from '$lib/store';
 
-	console.log('im here!');
 	onMount(async () => {
 		if (browser) {
 			const code = new URLSearchParams(window.location.search).get('code');

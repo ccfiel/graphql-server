@@ -389,18 +389,3 @@ builder.mutationField('validateGitHubVerificationToken', t =>
     },
   }),
 )
-
-
-// builder.mutationField('getGitHubVerificationURL', t =>
-//   t.field({
-//     type: 'String',
-//     resolve: async (_) => {
-//       try {
-//         const [url] = await githubAuth.getAuthorizationUrl();
-//         return url.toString();
-//       } catch (error: any) {
-//         return Promise.reject(new GraphQLError(error.message))
-//       }
-//     },
-//   }),
-// )

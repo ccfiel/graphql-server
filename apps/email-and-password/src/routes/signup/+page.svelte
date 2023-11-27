@@ -28,6 +28,7 @@
 				id: res.data?.signupWithEmail.user.userId ?? '',
 				sessionId: res.data?.signupWithEmail.sessionId ?? '',
 				email,
+				username: email,
 				emailVerified: false,
 			});
 			goto('/');

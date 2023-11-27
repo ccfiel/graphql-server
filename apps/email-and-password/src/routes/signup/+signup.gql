@@ -3,6 +3,7 @@ mutation SignUp($email: String!, $password: String!) {
 		sessionId
 		user {
 			userId
+			username
 		}
 	}
 }
