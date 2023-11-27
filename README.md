@@ -7,7 +7,13 @@ An example code with separate client and server using token base authentication.
 Run the following command:
 
 ```sh
-npx create-turbo@latest -e with-svelte
+git clone https://github.com/ccfiel/graphql-server
+cd graphql-server
+pnpm install
+cd apps/graphql
+cp .env.sample .env
+pnpm generate
+npx prisma db push
 ```
 
 ## What's inside?
