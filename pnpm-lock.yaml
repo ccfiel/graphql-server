@@ -130,6 +130,12 @@ importers:
       eslint-plugin-svelte:
         specifier: ^2.30.0
         version: 2.35.1(eslint@8.54.0)(svelte@4.2.7)
+      houdini:
+        specifier: ^1.2.33
+        version: 1.2.33
+      houdini-svelte:
+        specifier: ^1.2.33
+        version: 1.2.33
       prettier:
         specifier: ^2.8.0
         version: 2.8.7
@@ -205,9 +211,6 @@ importers:
       lucia:
         specifier: ^2.7.4
         version: 2.7.4
-      providers:
-        specifier: link:@lucia-auth/oauth/providers
-        version: link:@lucia-auth/oauth/providers
       tslib:
         specifier: ^2.6.2
         version: 2.6.2

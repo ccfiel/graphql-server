@@ -34,7 +34,6 @@
     "graphql-subscriptions": "^2.0.0",
     "graphql-yoga": "^5.0.0",
     "lucia": "^2.7.4",
-    "providers": "link:@lucia-auth/oauth/providers",
     "tslib": "^2.6.2"
   },
   "devDependencies": {

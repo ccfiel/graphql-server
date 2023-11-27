@@ -18,6 +18,7 @@
 				id: res.data?.validateEmailVerificationToken.user.userId ?? '',
 				sessionId: res.data?.validateEmailVerificationToken.sessionId ?? '',
 				email: res.data?.validateEmailVerificationToken.user.email ?? '',
+                username: '',
                 emailVerified: true,
 			});
             goto('/');

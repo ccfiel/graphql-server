@@ -12,7 +12,7 @@
 		if (res.errors?.length ?? 0 > 0) {
 			console.error(res.errors);
 		} else {
-			user.set({ id: '', sessionId: '', email: '', emailVerified: false });
+			user.set({ id: '', sessionId: '', email: '', username: '', emailVerified: false });
 			goto('/login');
 		}
 	}

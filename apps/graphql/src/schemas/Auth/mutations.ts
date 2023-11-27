@@ -12,6 +12,9 @@ const UserType = builder.simpleObject('UserType', {
     userId: t.string({
       nullable: false,
     }),
+    username: t.string({
+      nullable: true,
+    }),
     email: t.string({
       nullable: true,
     }),
@@ -371,6 +374,8 @@ builder.mutationField('validateGitHubVerificationToken', t =>
           user: {
             userId: session.user.userId,
             email: user.email ?? '',
+            username: user.username ?? '',
+            emailVerified: true,
           },
           sessionId: session.sessionId,
           idlePeriodExpiresAt: session.idlePeriodExpiresAt,

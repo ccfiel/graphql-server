@@ -4,6 +4,7 @@ mutation ValidateGitHubVerificationToken($token: String!) {
 		user {
 			userId
 			email
+			username
 			emailVerified
 		}
 	}
