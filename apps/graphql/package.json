@@ -1,5 +1,5 @@
 {
-  "name": "my-app",
+  "name": "graphql-server",
   "type": "module",
   "main": "dist/main.js",
   "types": "dist/main.d.ts",
