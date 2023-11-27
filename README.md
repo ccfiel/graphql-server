@@ -1,6 +1,6 @@
-# Turborepo Svelte starter
+# Lucia Auth Example with separate client and server
 
-This is an official starter Turborepo.
+An example code with separate client and server using token base authentication.
 
 ## Using this example
 
