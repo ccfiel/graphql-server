@@ -14,6 +14,7 @@ cd apps/graphql
 cp .env.sample .env
 pnpm generate
 npx prisma db push
+pnpm dev
 ```
 
 ## What's inside?
