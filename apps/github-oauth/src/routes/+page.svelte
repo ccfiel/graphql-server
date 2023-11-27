@@ -18,6 +18,8 @@
 	}
 
 	user.subscribe((value) => {
+		console.log('user changed');
+		console.log(value);
 		if (!value.sessionId && browser) {
 			goto('/login');
 		}

@@ -18,6 +18,7 @@ type Mutation {
 }
 
 type Query {
+  getGitHubVerificationURL: String!
   version: String!
 }
 
