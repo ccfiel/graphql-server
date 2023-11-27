@@ -32,4 +32,4 @@
 	});
 </script>
 
-<h1>Hello world!!!</h1>
+<p>Loading...Please wait.</p>

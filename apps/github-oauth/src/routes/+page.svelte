@@ -24,9 +24,13 @@
 	});
 </script>
 
-<h1>Profile</h1>
-<p>User id: {$user.id}</p>
-<p>Username: {$user.username}</p>
-<form method="post" action="/logout" on:submit={onLogOut}>
-	<input type="submit" value="Sign out" />
-</form>
+{#if $user.id}
+	<h1>Profile</h1>
+	<p>User id: {$user.id}</p>
+	<p>Username: {$user.username}</p>
+	<form method="post" action="/logout" on:submit={onLogOut}>
+		<input type="submit" value="Sign out" />
+	</form>
+{:else}
+	<p>Loading...Please wait.</p>
+{/if}
