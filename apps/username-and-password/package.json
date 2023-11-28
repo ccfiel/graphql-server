@@ -15,7 +15,6 @@
 	"devDependencies": {
 		"@sveltejs/adapter-auto": "^2.1.1",
 		"@sveltejs/kit": "^1.27.6",
-		"@types/better-sqlite3": "^7.6.8",
 		"@typescript-eslint/eslint-plugin": "^6.12.0",
 		"@typescript-eslint/parser": "^6.12.0",
 		"eslint": "^8.54.0",
