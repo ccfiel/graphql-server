@@ -12,11 +12,6 @@
 		"lint": "prettier --plugin-search-dir . --check . && eslint .",
 		"format": "prettier --plugin-search-dir . --write ."
 	},
-	"dependencies": {
-		"@lucia-auth/adapter-sqlite": "latest",
-		"better-sqlite3": "^9.1.1",
-		"lucia": "latest"
-	},
 	"devDependencies": {
 		"@sveltejs/adapter-auto": "^2.1.1",
 		"@sveltejs/kit": "^1.27.6",
